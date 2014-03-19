@@ -18,17 +18,17 @@
     },
 
     // Publishes a variable, sharing it on the vent
-    publish: function( varName, generator ) {
+    publish: function( varName, definition, context ) {
 
       // Publish a dynamic variable
-      if ( typeof generator === 'function' ) {
-        reqres.setHandler( varName, generator );
+      if ( typeof definition === 'function' ) {
+        reqres.setHandler( varName, definition, context );
       }
 
       // Or a static one
       else {
         reqres.setHandler( varName, function() {
-          return generator;
+          return definition;
         });
       }
 
