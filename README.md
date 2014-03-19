@@ -92,5 +92,15 @@ futureList.then( function(todoList) {
 futureVars.promised( 'appState' ).then( someCb );
 ```
 
+##### `FutureVariable.prototype.then( callback [, context] )`
+
+This method allows you to register callbacks to be executed once the variable has been set. You
+optionally pass a context for the callback function.
+
+```js
+// Call someCb with the current context
+futureVars.promised( 'someProperty' ).then( someCb, this );
+```
+
 If the Future Variable has already been published then the callback will be executed immediately.
 
