@@ -7,11 +7,11 @@ future-vars is a promise-like layer on top of `Wreqr.RequestResponse`.
 Loosely coupled applications are prized for their ease of maintenance
 and modularity. `future-vars` is a library that expands upon the
 principles of `Wreqr.RequestResponse` to further the aim of building
-such applications as these.
+applications like these.
 
 The decision to use `RequestResponse` is a move in the right direction toward building
-modular applications. It allows you to access properties on other components
-of your application without a direct reference to those components.
+modular applications. It allows one to share information between the components
+of your application without a direct reference to any of those components.
 
 ```js
 /* within moduleTwo.js */
@@ -24,15 +24,15 @@ moduleTwo.prop = app.reqres.request( 'someProp' );
 ```
 
 But `RequestResponse` doesn't solve all of the issues. The above code still requires that
-moduleOne be initialized before moduleTwo; otherwise the request will return `undefined`.
-This is the problem that `future-vars` solves for; it allows you to load your components
+moduleOne be initialized before moduleTwo, otherwise the request will return `undefined`.
+This is the problem that `future-vars` solves for – it allows you to load your components
 in any order.
 
 ## Getting started
 
-Get the source by download direct or through Bower.
+Get the source by download direct ~~or through Bower~~ (not yet).
 
-`bower install future-vars`
+~~`bower install future-vars`~~
 
 Include the source after `Backbone.Wreqr`.
 
@@ -42,14 +42,9 @@ Include the source after `Backbone.Wreqr`.
 
 `future-vars` is available on the global object as `futureVars`.
 
-```js
-// the future-vars object
-window.futureVars;
-```
-
 ##### `publish( variableName, definition )`
 
-Call this method to define a variable. The first argument is the name of the variable; the second
+Call this method to define a variable. The first argument is the name of the variable, the second
 is its definition.
 
 ```js
@@ -64,8 +59,8 @@ futureVars.publish( 'yourName', function() {
 
 ##### `get( variableName )`
 
-Request a variable by name. Call this when you can be certain that a variable
-has been published.
+Request a variable by name. Call this when you can be certain that the variable
+is already published.
 
 ```js
 futureVars.get( 'groceryList' );
@@ -95,7 +90,7 @@ futureVars.promised( 'appState' ).then( someCb );
 ##### `FutureVariable.prototype.then( callback [, context] )`
 
 This method allows you to register callbacks to be executed once the variable has been set. You
-optionally pass a context for the callback function.
+can optionally pass a context for the callback function.
 
 ```js
 // Call someCb with the current context
