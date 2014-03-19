@@ -33,6 +33,12 @@
     "grunt": "^0.4.4",
     "grunt-contrib-uglify": "^0.4.0",
     "grunt-contrib-jshint": "^0.9.2",
-    "load-grunt-tasks": "^0.4.0"
+    "load-grunt-tasks": "^0.4.0",
+    "grunt-contrib-connect": "^0.7.1",
+    "grunt-blanket-mocha": "^0.4.0",
+    "blanket": "^1.1.6"
+  },
+  "dependencies": {
+    "backbone.wreqr": "^1.1.0"
   }
 }

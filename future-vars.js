@@ -35,6 +35,12 @@
       // Share it on the vent; FutureVariables listen for this
       vent.trigger( 'published:'+varName, reqres.request(varName) );
 
+    },
+
+    // Resets the futureVars object
+    reset: function() {
+      vent.off();
+      reqres.removeAllHandlers();
     }
 
   };
