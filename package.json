@@ -1,0 +1,38 @@
+{
+  "name": "future-vars",
+  "version": "0.1.0",
+  "description": "A promise-like layer on top of Wreqr.ResponseResponse",
+  "main": "future-vars.js",
+  "scripts": {
+    "test": "grunt test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Puppets/future-vars.git"
+  },
+  "keywords": [
+    "wreqr",
+    "backbone",
+    "marionette",
+    "puppets",
+    "futures",
+    "future",
+    "promise",
+    "promises",
+    "deferred",
+    "backbone.marionette",
+    "modular",
+    "modules",
+    "loosely",
+    "decoupled",
+    "coupled"
+  ],
+  "author": "Jmeas",
+  "license": "MIT",
+  "devDependencies": {
+    "grunt": "^0.4.4",
+    "grunt-contrib-uglify": "^0.4.0",
+    "grunt-contrib-jshint": "^0.9.2",
+    "load-grunt-tasks": "^0.4.0"
+  }
+}

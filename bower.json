@@ -1,0 +1,34 @@
+{
+  "name": "future-vars",
+  "version": "0.1.0",
+  "homepage": "https://github.com/Puppets/future-vars",
+  "authors": [
+    "Jmeas"
+  ],
+  "keywords": [
+    "wreqr",
+    "backbone",
+    "marionette",
+    "puppets",
+    "futures",
+    "future",
+    "promise",
+    "promises",
+    "deferred",
+    "backbone.marionette",
+    "modular",
+    "modules",
+    "loosely",
+    "decoupled",
+    "coupled"
+  ],
+  "description": "A promise-like layer on top of Wreqr.RequestResponse",
+  "license": "MIT",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ]
+}
