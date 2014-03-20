@@ -23,12 +23,14 @@
   <!-- Load & configure chai & sinon -->
   <script src='../bower_components/chai/chai.js'></script>
   <script src='../bower_components/sinon-chai/lib/sinon-chai.js'></script>
+  <script src='../bower_components/chai-as-promised/lib/chai-as-promised.js'></script>
   <script src='../bower_components/sinonjs/sinon.js'></script>
   <script>
     var expect = chai.expect;
   </script>
 
   <!-- Load any dependencies (bower components) -->
+  <script src='../bower_components/es6-promise/promise.js'></script>
   <script src='../bower_components/underscore/underscore.js'></script>
   <script src='../bower_components/backbone/backbone.js'></script>
   <script src='../bower_components/backbone.wreqr/lib/backbone.wreqr.js'></script>
@@ -38,6 +40,33 @@
 
   <!-- Of course, the specs themselves as well -->
   <script src='spec/future-vars.js'></script>
+
+  <!-- Function.prototype.bind polyfill (required for chai-as-promised in phantom.js) -->
+  <script>
+  if (!Function.prototype.bind) {
+    Function.prototype.bind = function (oThis) {
+      if (typeof this !== "function") {
+        // closest thing possible to the ECMAScript 5 internal IsCallable function
+        throw new TypeError("Function.prototype.bind - what is trying to be bound is not callable");
+      }
+
+      var aArgs = Array.prototype.slice.call(arguments, 1), 
+          fToBind = this, 
+          fNOP = function () {},
+          fBound = function () {
+            return fToBind.apply(this instanceof fNOP && oThis
+                                   ? this
+                                   : oThis,
+                                 aArgs.concat(Array.prototype.slice.call(arguments)));
+          };
+
+      fNOP.prototype = this.prototype;
+      fBound.prototype = new fNOP();
+
+      return fBound;
+    };
+  }
+  </script>
 
   <!-- Run mocha -->
   <script type='text/javascript'>
@@ -50,6 +79,7 @@
 
     mocha
       .globals(['Backbone']) // Globals
+      .timeout(300)
       .run();
   }
   </script>

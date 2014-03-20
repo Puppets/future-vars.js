@@ -48,42 +48,44 @@ describe('Executing reset', function() {
 
 });
 
-describe('Setting `then` callbacks on a FutureVariable', function() {
+describe('When calling promised', function() {
 
-  var cbOneSpy, cbTwoSpy, publishSpy, val;
+  var promisedVar;
 
   beforeEach(function() {
 
-    val = 'pasta';
-    cbOneSpy = sinon.spy();
-    cbTwoSpy = sinon.spy();
-    publishSpy = sinon.spy( futureVars, 'publish' );
+    promisedVar = futureVars.promised( 'someVal' );
 
-    futureVars.promised( 'someVal' ).then( cbOneSpy );
-    futureVars.publish( 'someVal', val );
-    futureVars.promised( 'someVal' ).then( cbTwoSpy );
+  });
+
+  it( 'should return a promise', function() {
+    expect( promisedVar ).to.be.instanceof( Promise );
+  });
+
+});
+
+describe('When publishing a value', function() {
+
+  var promises;
+
+  beforeEach(function() {
+
+    promises = Promise.all([
+      futureVars.promised( 'someVal' ),
+      futureVars.promised( 'someVal' ),
+      futureVars.promised( 'someVal' )
+    ]);
+
+    futureVars.publish( 'someVal', 'pasta' );
 
   });
 
   afterEach(function() {
     futureVars.reset();
-    publishSpy.restore();
   });
 
-  it( 'should execute the first cb after the value is published', function() {
-    expect( cbOneSpy ).to.have.been.calledOnce;
-    expect( publishSpy ).to.have.been.calledOnce;
-    expect( publishSpy ).to.have.been.calledBefore( cbOneSpy );
-  });
-
-  it( 'should pass the value to the callbacks', function() {
-    expect( cbOneSpy ).to.always.have.been.calledWithExactly( val );
-    expect( cbTwoSpy ).to.always.have.been.calledWithExactly( val );
-  });
-
-  it( 'should run callbacks immediately if the value is published', function() {
-    expect( cbTwoSpy ).to.have.been.calledOnce;
-    expect( publishSpy ).to.have.been.calledBefore( cbTwoSpy );
+  it( 'should resolve all of the promises', function() {
+    return expect( promises ).to.have.eventually.been.fulfilled;
   });
 
 });

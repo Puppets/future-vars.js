@@ -1,20 +1,24 @@
 (function() {
 
-  // Our local messaging protocols
+  // Local messaging protocols
   var vent = new Backbone.Wreqr.EventAggregator();
   var reqres = new Backbone.Wreqr.RequestResponse();
 
   // The public API
   var futureVars = {
 
-    // Returns a new Future
-    promised: function( varName ) {
-      return new FutureVariable( varName );
+    // Returns a FutureVariable (a promise)
+    promised: function() {
+      return futureGenerator.apply(undefined, arguments);
     },
 
     // Get the variable
     get: function( varName ) {
       return reqres.request( varName );
+    },
+
+    isPublished: function( varName ) {
+      return reqres.hasHandler( varName );
     },
 
     // Publishes a variable, sharing it on the vent
@@ -31,8 +35,11 @@
           return definition;
         });
       }
+      vent.on( 'published:'+varName, function() {
+        console.log('resolved');
+      });
 
-      // Share it on the vent; FutureVariables listen for this
+      // Share it on the vent; FutureVariables are resolved by this
       vent.trigger( 'published:'+varName, reqres.request(varName) );
 
     },
@@ -45,31 +52,41 @@
 
   };
 
-  // The promise-like object
-  var FutureVariable = function( varName ) {
-    this.varName = varName;
-  };
+  // Generates our promise to return to the user
+  function futureGenerator() {
 
-  // Register a callback
-  FutureVariable.prototype.then = function( cb, context ) {
+    var args = Array.prototype.slice.call( arguments, 0 );
 
-    var self = this;
-    context = context || window;
-
-    // Immediately invoke it if the handler is set
-    if ( reqres.hasHandler(this.varName) ) {
-      // Move the cb to the back of the queue
-      window.setTimeout(
-        cb.call( context, reqres.request(self.varName) )
-      , 0);
+    // If there's only a single argument, return a single FutureVariable
+    if (args.length === 1) {
+      return futureVariable( args[0] );
     }
 
-    // Otherwise, trigger it once it's been added
+    // Otherwise return a grouped promise
     else {
-      vent.once( 'published:'+this.varName, cb );
+      var promises = [];
+      forEach( arguments, function(arg) {
+        promises.push( futureVariable(arg) );
+      });
+      return Promise.all( promises );
     }
+  }
 
-  };
+  // Returns a promise for a single variable
+  function futureVariable( varName ) {
+    return new Promise(function(resolve) {
+      console.log('lalala');
+      vent.on( 'published:'+varName, resolve );
+    });
+  }
+
+  // Executes a function for each item in the array
+  function forEach( arr, fn, context ) {
+    var i = 0;
+    for (i; i<arr.length; i++) {
+      fn.call( context, arr[i], i );
+    }
+  }
 
   window.futureVars = futureVars;
 
