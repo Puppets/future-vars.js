@@ -28,16 +28,12 @@
       if ( typeof definition === 'function' ) {
         reqres.setHandler( varName, definition, context );
       }
-
       // Or a static one
       else {
         reqres.setHandler( varName, function() {
           return definition;
         });
       }
-      vent.on( 'published:'+varName, function() {
-        console.log('resolved');
-      });
 
       // Share it on the vent; FutureVariables are resolved by this
       vent.trigger( 'published:'+varName, reqres.request(varName) );
@@ -75,7 +71,6 @@
   // Returns a promise for a single variable
   function futureVariable( varName ) {
     return new Promise(function(resolve) {
-      console.log('lalala');
       vent.on( 'published:'+varName, resolve );
     });
   }
