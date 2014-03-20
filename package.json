@@ -1,7 +1,7 @@
 {
   "name": "future-vars",
   "version": "0.2.0",
-  "description": "A promise-like layer on top of Wreqr.ResponseResponse",
+  "description": "A promise interface for Wreqr.ResponseResponse",
   "main": "future-vars.js",
   "scripts": {
     "test": "grunt test"

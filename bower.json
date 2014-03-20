@@ -22,7 +22,7 @@
     "decoupled",
     "coupled"
   ],
-  "description": "A promise-like layer on top of Wreqr.RequestResponse",
+  "description": "A promise interface for Wreqr.RequestResponse",
   "license": "MIT",
   "ignore": [
     "**/.*",

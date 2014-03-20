@@ -1,6 +1,6 @@
 # future-vars.js
 
-future-vars is an interface for working with promises on top of `Wreqr.RequestResponse`.
+future-vars is an interface for working with promises with `Wreqr.RequestResponse`.
 
 ## Motivation
 
