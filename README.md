@@ -1,16 +1,16 @@
 # future-vars.js
 
-future-vars is an interface for working with promises with `Wreqr.RequestResponse`.
+future-vars is an interface for working with promises on top of `Wreqr.RequestResponse`.
 
 ## Motivation
 
-Loosely coupled applications are prized for their ease of maintenance
-and modularity. `future-vars` is a library that expands upon the
+Loosely coupled applications are prized for their modularity and ease of maintenance.
+`future-vars` is a library that builds on the
 principles of `Wreqr.RequestResponse` to further the aim of building
 applications like these.
 
-The decision to use `RequestResponse` is a move in the right direction toward building
-modular applications. It allows one to share information between the components
+`RequestResponse` is a good start to build modular applications.
+It allows one to share information between the components
 of an application without a direct reference to any one of those components.
 
 ```js
@@ -23,7 +23,7 @@ moduleTwo.prop = app.moduleOne.someProp;
 moduleTwo.prop = app.reqres.request( 'someProp' );
 ```
 
-But using `RequestResponse` still leaves the issue of dependency order. The above code still
+But using `RequestResponse` still leaves you with the issue of dependencies. The above code
 requires that moduleOne be initialized before moduleTwo, otherwise the request will return `undefined`.
 This is one problem that `future-vars` solves for – it allows you to load your components
 in any order.
@@ -33,15 +33,17 @@ available in an application.
 
 ## Getting started
 
-Get the source by download direct ~~or through Bower~~ (not yet).
+Get the source by download direct or through Bower.
 
-`~~bower install future-vars~~`
+`bower install future-vars`
 
 Include the source after `Backbone.Wreqr`.
 
 `<script src='future-vars.js'></script>`
 
-**Note:** `future-vars` requires ES6-style promises. [Jake Archibald's polyfill](https://github.com/jakearchibald/es6-promise) is recommended for older browsers.
+_**Note:** It is recommended that you use ES6 promises with `future-vars`.
+[Jake Archibald's polyfill](https://github.com/jakearchibald/es6-promise) is my polyfill of choice
+when legacy browsers are a consideration._
 
 ## API
 
@@ -75,7 +77,7 @@ is already published.
 futureVars.get( 'groceryList' );
 ```
 
-The function will return `undefined` if the variable hasn't been set.
+This method will return `undefined` if the variable hasn't been published.
 
 ##### `promised( varOne [, varTwo] [, varN]  )`
 
@@ -90,7 +92,7 @@ var futureList = futureVars.promised( 'todoList' );
 ### Examples
 
 You can work with `FutureVariable`s like any other promise. For an in-depth guide to ES6 Promises I
-encourage you to read the [HTML5 article on the matter.](http://www.html5rocks.com/en/tutorials/es6/promises/)
+encourage you to read the [HTML5 article on them.](http://www.html5rocks.com/en/tutorials/es6/promises/)
 
 For this library the most useful feature of promises is their `then` method. The first argument of `then`
 is called once the `FutureVariable` resolves.
@@ -110,12 +112,6 @@ futureList.then( function(todoList) {
 });
 
 futureVars.publish( 'todoList', ['eat', 'sleep'] );
-
-// More often than not you won't need to keep a reference of the Future
-futureVars.promised( 'appState' ).then( someCb );
-
-// Call someCb with the current context
-futureVars.promised( 'someProperty' ).then( someCb, this );
 ```
 
 #### Multiple FutureVariables
@@ -137,7 +133,7 @@ futureNames.then(function(namesArr) {
 
 #### Quick References
 
-Most of the time you won't need to store a reference to the `FutureVariable`. You can just
+Most of the time you won't need to store a reference to the `FutureVariable`. You can instead simply
 set things up all at once.
 
 ```js
