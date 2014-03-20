@@ -9,7 +9,7 @@ Loosely coupled applications are prized for their modularity and ease of mainten
 principles of `Wreqr.RequestResponse` to further the aim of building
 applications like these.
 
-`RequestResponse` is a good start to build modular applications.
+`RequestResponse` is a good start to building modular applications.
 It allows one to share information between the components
 of an application without a direct reference to any one of those components.
 
@@ -125,7 +125,7 @@ futureVars.publish( 'his', 'james' );
 futureVars.publish( 'hers', 'mora' );
 futureVars.publish( 'dogs', 'wilbur' );
 
-futureNames.then(function(namesArr) {
+futureNames.then(function(namesArray) {
   // Logs an array: ['james', 'mora', 'wilbur']
   console.log( namesArray );
 });
@@ -133,7 +133,7 @@ futureNames.then(function(namesArr) {
 
 #### Quick References
 
-Most of the time you won't need to store a reference to the `FutureVariable`. You can instead simply
+Most of the time you won't need to store a reference to the `FutureVariable`. You can instead choose to
 set things up all at once.
 
 ```js
