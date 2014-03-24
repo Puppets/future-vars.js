@@ -8,21 +8,18 @@
   var futureVars = {
 
     // Returns a FutureVariable (a promise)
-    promised: function() {
+    promised: function( varNames, options ) {
 
       // If it's not an array, then return a single FutureVariable
       if ( !(varNames instanceof Array) ) {
-        return futureGenerator.apply(undefined, args);
+        return futureGenerator( varNames, options );
       }
 
       // Otherwise, return a Promise.all for all of the FutureVariables
       else {
         var promises = [];
-        var newArgs;
-        forEach( varNames, function(arg) {
-          newArgs = args.slice(0);
-          newArgs[ 0 ] = arg;
-          promises.push( futureGenerator.apply(undefined, newArgs) );
+        forEach( varNames, function(varName) {
+          promises.push( futureGenerator( varName, options) );
         });
         return Promise.all( promises );
       }
@@ -30,15 +27,15 @@
     },
 
     // Get the variable
-    get: function() {
-      return _reqres.request.apply( _reqres, arguments );
+    get: function( varName, options ) {
+      return _reqres.request( varName, options );
     },
 
     isPublished: function( varName ) {
       return _reqres.hasHandler( varName );
     },
 
-    // Publishes a variable, sharing it on the vent
+    // Publishes a variable, then shares it on the local vent
     publish: function( varName, definition, context ) {
 
       // Publish a dynamic variable
@@ -66,33 +63,25 @@
   };
 
   // Generates our promise to return to the user
-  function futureGenerator() {
-
-    var args = Array.prototype.slice.call( arguments, 0 );
-    var varName = args[ 0 ];
+  function futureGenerator( varName, options ) {
 
     // If the variable has already been set, return an already-resolved promise
-    if ( _reqres.hasHandler(varName) ) {
-      return Promise.resolve(  )
+    if ( _reqres.hasHandler( varName) ) {
+      return Promise.resolve( _reqres.request(varName, options) );
     }
 
     // Otherwise return an unresolved promise
     else {
-      return new futureVariable.apply( undefined, args )
+      return new FutureVariable( varName, options );
     }
-
-    
 
   }
 
-  // Returns a promise for a single variable
-  function futureVariable( varName ) {
-    var args = Array.prototype.slice.call( arguments, 0 );
-    console.log( 'Received some args', args );
+  // Returns a Promise for a single variable
+  function FutureVariable( varName, options ) {
     return new Promise(function(resolve) {
       _vent.on( 'published:'+varName, function() {
-        console.log( 'These are the args down here', args );
-        resolve( _reqres.request.apply(_reqres, args) );
+        resolve( _reqres.request(varName, options) );
       });
     });
   }

@@ -52,7 +52,7 @@ The future-vars API is available on the global object as `futureVars`.
 ##### `publish( variableName, definition )`
 
 Call this method to define a variable. The first argument is the name of the variable, the second
-is its definition.
+is its definition. A fulfilled FutureVariable for this variable is returned from this method.
 
 ```js
 // The definition can be a static value
@@ -64,11 +64,14 @@ futureVars.publish( 'yourName', function() {
 });
 ```
 
+If a function is defined, any arguments passed to the request to get the variable will be passed along
+to that function. Refer to the `get` and `promised` sections below for examples.
+
 ##### `isPublished( variableName )`
 
 Determine whether or not a variable has been published. Returns a Boolean.
 
-##### `get( variableName )`
+##### `get( variableName [, options] )`
 
 Request a variable by name. Call this when you can be certain that the variable
 is already published.
@@ -79,15 +82,35 @@ futureVars.get( 'groceryList' );
 
 This method will return `undefined` if the variable hasn't been published.
 
-##### `promised( varOne [, varTwo] [, varN]  )`
+If you pass a second argument it will be passed to the variable definition, if it
+happens to be a function.
+
+```js
+futureVars.publish( 'fullName', function(options) {
+  return options.firstName + ' ' + options.lastName;
+});
+
+// Returns 'Ada Lovelace'
+futureVars.get('userName', { firstName:'Ada', lastName:'Lovelace');
+```
+
+##### `promised( vars [, options] )`
 
 The promised method returns a `FutureVariable`, which is a promise that resolves
 once each of its arguments have been published. FutureVariables are never rejected.
 
+This can either be a single variable or an array of variables.
+
 ```js
 // Get a FutureVariable
 var futureList = futureVars.promised( 'todoList' );
+
+// Get a FutureVariable that fulfills once the array of variables are fulfilled
+var futureNames = futureVars.promised( ['myName', 'yourName', 'hisName'] );
 ```
+
+As with the `get` method, if you pass a second argument it will be passed to the variable
+definition if it's a function.
 
 ### Examples
 

@@ -1,4 +1,4 @@
-describe('When calling get', function() {
+describe( 'When calling get', function() {
 
   var unsetVal, setVal, val;
 
@@ -23,37 +23,37 @@ describe('When calling get', function() {
     expect( setVal ).to.equal( val );
   });
 
+  describe( 'and passing options', function() {
+
+    var valName, spy, options;
+
+    beforeEach(function() {
+
+      valName = 'val';
+      spy = sinon.spy();
+      options = {
+        name: 'bill',
+        age: 45,
+        hungry: true
+      };
+      futureVars.publish( valName, spy);
+      val = futureVars.get( valName, options, true, 'string' );
+
+    });
+
+    afterEach(function() {
+      futureVars.reset();
+    });
+
+    it( 'should pass the options to the reqres handler', function() {
+      expect( spy ).to.have.been.calledWithExactly( options );
+    });
+
+  });
+
 });
 
-describe('When calling get, and passing options', function() {
-
-  var valName, val, spy, options;
-
-  beforeEach(function() {
-
-    valName = 'val';
-    spy = sinon.spy();
-    options = {
-      name: 'bill',
-      age: 45,
-      hungry: true
-    };
-    futureVars.publish( valName, spy);
-    val = futureVars.get( valName, options, true, 'string' );
-
-  });
-
-  afterEach(function() {
-    futureVars.reset();
-  });
-
-  it( 'should pass the options to the reqres handler', function() {
-    expect( spy ).to.have.been.calledWithExactly( options, true, 'string' );
-  });
-
-});
-
-describe('Executing reset', function() {
+describe( 'Executing reset', function() {
 
   var unsetVal, val;
 
@@ -76,113 +76,163 @@ describe('Executing reset', function() {
 
 });
 
-describe('When calling promised', function() {
+describe( 'When calling isPublished', function() {
+
+  var val;
+
+  describe( 'and the variable has not been published', function() {
+
+    beforeEach(function() {
+      val = futureVars.isPublished( 'someVal' );
+    });
+
+    it( 'should return false', function() {
+      expect( val ).to.be.false;
+    });
+
+  });
+
+  describe( 'and the variable has been published', function() {
+
+    beforeEach(function() {
+      futureVars.publish( 'someVal', 'lalala' );
+      val = futureVars.isPublished( 'someVal' );
+    });
+
+    it( 'should return true', function() {
+      expect( val ).to.be.true;
+    });
+
+  });
+
+});
+
+describe( 'When calling promised', function() {
 
   var promisedVar;
 
-  beforeEach(function() {
+  describe( 'and the variable has yet to be published', function() {
 
-    promisedVar = futureVars.promised( 'someVal' );
+    beforeEach(function() {
+
+      promisedVar = futureVars.promised( 'someVal' );
+
+    });
+
+    it( 'should return a promise', function() {
+      expect( promisedVar ).to.be.instanceof( Promise );
+    });
 
   });
 
-  it( 'should return a promise', function() {
-    expect( promisedVar ).to.be.instanceof( Promise );
+  describe( 'and the variable has been published', function() {
+
+    beforeEach(function() {
+
+      futureVars.publish( 'someVal', 'pasta' );
+      promisedVar = futureVars.promised( 'someVal' );
+
+    });
+
+    it( 'should also return a promise', function() {
+      expect( promisedVar ).to.be.instanceof( Promise );
+    });
+
+  });
+
+  describe( 'with an array of values', function() {
+
+    beforeEach(function() {
+
+      promisedVar = futureVars.promised( ['someVal', 'someOtherVal'] );
+
+    });
+
+    it( 'should return a promise', function() {
+      expect( promisedVar ).to.be.instanceof( Promise );
+    });
+
   });
 
 });
 
-describe('When calling promised with an array of values', function() {
-
-  var promisedVar;
-
-  beforeEach(function() {
-
-    promisedVar = futureVars.promised( ['someVal', 'someOtherVal'] );
-
-  });
-
-  it( 'should return a promise', function() {
-    expect( promisedVar ).to.be.instanceof( Promise );
-  });
-
-});
-
-describe('When publishing a value', function() {
+describe( 'When publishing', function() {
 
   var promises;
 
-  beforeEach(function() {
+  describe( 'a single variable', function() {
 
-    promises = Promise.all([
-      futureVars.promised( 'someVal' ),
-      futureVars.promised( 'someVal' ),
-      futureVars.promised( 'someVal' )
-    ]);
+    beforeEach(function() {
 
-    futureVars.publish( 'someVal', 'pasta' );
+      promises = Promise.all([
+        futureVars.promised( 'someVal' ),
+        futureVars.promised( 'someVal' ),
+        futureVars.promised( 'someVal' )
+      ]);
 
-  });
+      futureVars.publish( 'someVal', 'pasta' );
 
-  afterEach(function() {
-    futureVars.reset();
-  });
+    });
 
-  it( 'should resolve all of the promises', function() {
-    return expect( promises ).to.have.eventually.been.fulfilled;
-  });
+    afterEach(function() {
+      futureVars.reset();
+    });
 
-});
-
-describe('When publishing multiple values', function() {
-
-  var promises;
-
-  beforeEach(function() {
-
-    promises = futureVars.promised( ['valOne','valTwo','valThree'] );
-
-    futureVars.publish( 'valOne', 'pasta' );
-    futureVars.publish( 'valTwo', 'sandwich' );
-    futureVars.publish( 'valThree', 'cookies' );
+    it( 'should resolve all of the promises', function() {
+      return expect( promises ).to.have.eventually.been.fulfilled;
+    });
 
   });
 
-  afterEach(function() {
-    futureVars.reset();
-  });
+  describe( 'multiple values', function() {
 
-  it( 'should resolve the promise', function() {
-    return expect( promises ).to.have.eventually.been.fulfilled;
-  });
+    beforeEach(function() {
 
-});
+      promises = futureVars.promised( ['valOne','valTwo','valThree'] );
 
-describe('When requesting a value with options', function() {
+      futureVars.publish( 'valOne', 'pasta' );
+      futureVars.publish( 'valTwo', 'sandwich' );
+      futureVars.publish( 'valThree', 'cookies' );
 
-  var promises, spy, options;
+    });
 
-  beforeEach(function() {
+    afterEach(function() {
+      futureVars.reset();
+    });
 
-    options = {
-      color: 'red',
-      name: 'Jason',
-      hungry: true
-    };
-
-    spy = sinon.spy();
-
-    promises = futureVars.promised( 'someVal', options );
-    futureVars.publish( 'someVal', spy );
+    it( 'should resolve the promise', function() {
+      return expect( promises ).to.have.eventually.been.fulfilled;
+    });
 
   });
 
-  afterEach(function() {
-    futureVars.reset();
-  });
+  describe( 'and passing options', function() {
 
-  it( 'should pass the options onto the reqres handler', function() {
-    return expect( spy ).to.have.been.calledWithExactly( options );
+    var spy, options;
+
+    beforeEach(function() {
+
+      options = {
+        color: 'red',
+        name: 'Jason',
+        hungry: true
+      };
+
+      spy = sinon.spy();
+
+      promises = futureVars.promised( 'someVal', options );
+      futureVars.publish( 'someVal', spy );
+
+    });
+
+    afterEach(function() {
+      futureVars.reset();
+    });
+
+    it( 'should pass the options onto the reqres handler', function() {
+      return expect( spy ).to.have.been.calledWithExactly( options );
+    });
+
   });
 
 });
