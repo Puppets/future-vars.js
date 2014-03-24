@@ -1,77 +1,88 @@
 (function() {
 
   // Local messaging protocols
-  var vent = new Backbone.Wreqr.EventAggregator();
-  var reqres = new Backbone.Wreqr.RequestResponse();
+  var _vent = new Backbone.Wreqr.EventAggregator();
+  var _reqres = new Backbone.Wreqr.RequestResponse();
 
   // The public API
   var futureVars = {
 
     // Returns a FutureVariable (a promise)
-    promised: function() {
-      return futureGenerator.apply(undefined, arguments);
+    promised: function( varNames, options ) {
+
+      // If it's not an array, then return a single FutureVariable
+      if ( !(varNames instanceof Array) ) {
+        return futureGenerator( varNames, options );
+      }
+
+      // Otherwise, return a Promise.all for all of the FutureVariables
+      else {
+        var promises = [];
+        forEach( varNames, function(varName) {
+          promises.push( futureGenerator( varName, options) );
+        });
+        return Promise.all( promises );
+      }
+
     },
 
     // Get the variable
-    get: function( varName ) {
-      return reqres.request( varName );
+    get: function( varName, options ) {
+      return _reqres.request( varName, options );
     },
 
     isPublished: function( varName ) {
-      return reqres.hasHandler( varName );
+      return _reqres.hasHandler( varName );
     },
 
-    // Publishes a variable, sharing it on the vent
+    // Publishes a variable, then shares it on the local vent
     publish: function( varName, definition, context ) {
 
       // Publish a dynamic variable
       if ( typeof definition === 'function' ) {
-        reqres.setHandler( varName, definition, context );
+        _reqres.setHandler( varName, definition, context );
       }
       // Or a static one
       else {
-        reqres.setHandler( varName, function() {
+        _reqres.setHandler( varName, function() {
           return definition;
         });
       }
 
       // Share it on the vent; FutureVariables are resolved by this
-      vent.trigger( 'published:'+varName, reqres.request(varName) );
+      _vent.trigger( 'published:'+varName );
 
     },
 
     // Resets the futureVars object
     reset: function() {
-      vent.off();
-      reqres.removeAllHandlers();
+      _vent.off();
+      _reqres.removeAllHandlers();
     }
 
   };
 
   // Generates our promise to return to the user
-  function futureGenerator() {
+  function futureGenerator( varName, options ) {
 
-    var args = Array.prototype.slice.call( arguments, 0 );
-
-    // If there's only a single argument, return a single FutureVariable
-    if (args.length === 1) {
-      return futureVariable( args[0] );
+    // If the variable has already been set, return an already-resolved promise
+    if ( _reqres.hasHandler( varName) ) {
+      return Promise.resolve( _reqres.request(varName, options) );
     }
 
-    // Otherwise return a grouped promise
+    // Otherwise return an unresolved promise
     else {
-      var promises = [];
-      forEach( arguments, function(arg) {
-        promises.push( futureVariable(arg) );
-      });
-      return Promise.all( promises );
+      return new FutureVariable( varName, options );
     }
+
   }
 
-  // Returns a promise for a single variable
-  function futureVariable( varName ) {
+  // Returns a Promise for a single variable
+  function FutureVariable( varName, options ) {
     return new Promise(function(resolve) {
-      vent.on( 'published:'+varName, resolve );
+      _vent.on( 'published:'+varName, function() {
+        resolve( _reqres.request(varName, options) );
+      });
     });
   }
 
