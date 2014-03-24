@@ -52,19 +52,19 @@ The future-vars API is available on the global object as `futureVars`.
 ##### `publish( variableName, definition )`
 
 Call this method to define a variable. The first argument is the name of the variable, the second
-is its definition. A fulfilled FutureVariable for this variable is returned from this method.
+is its definition.
 
 ```js
 // The definition can be a static value
 futureVars.publish( 'myName', 'james' );
 
-// Or a dynamic one
-futureVars.publish( 'yourName', function() {
+// Or a dynamic one. It accepts options from any future requests
+futureVars.publish( 'yourName', function(options) {
   return this.yourName;
 });
 ```
 
-If a function is defined, any arguments passed to the request to get the variable will be passed along
+If a function is defined, the second argument of any request will be passed along
 to that function. Refer to the `get` and `promised` sections below for examples.
 
 ##### `isPublished( variableName )`
@@ -91,7 +91,7 @@ futureVars.publish( 'fullName', function(options) {
 });
 
 // Returns 'Ada Lovelace'
-futureVars.get('userName', { firstName:'Ada', lastName:'Lovelace');
+futureVars.get('fullName', { firstName:'Ada', lastName:'Lovelace');
 ```
 
 ##### `promised( vars [, options] )`
@@ -116,14 +116,16 @@ definition if it's a function.
 
 You can work with `FutureVariable`s like any other promise. For an in-depth guide to ES6 Promises I
 encourage you to read the [HTML5 article on them.](http://www.html5rocks.com/en/tutorials/es6/promises/)
+This section will give a quick look at using Promises with futureVars; it is not intended to be
+a thorough study.
 
-For this library the most useful feature of promises is their `then` method. The first argument of `then`
+As with most Promises the key feature is their `then` method. The first argument of `then`
 is called once the `FutureVariable` resolves.
 
 #### A single FutureVariable
 
-When working with a single FutureVariable, the first argument of the callback will be the value
-of the FutureVariable
+When working with a single FutureVariable, the first argument of the callback will be a new
+Promise with the value of the FutureVariable
 
 ```js
 // Get a FutureVariable
